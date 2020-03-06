@@ -58,20 +58,23 @@ module ``about the stock example`` =
     //helpers
     let splitCommas (x:string) = x.Split([|','|])
 
-    let getAvgs (xs: array<string>) =
-      (System.Double.Parse xs.[3]) - (System.Double.Parse xs.[0])
+    let toInt (int, (xs: array<string>)) =
+      System.Double.Parse xs.[int]
 
-    let toTuples (xs: array<string>) =
-      (xs.[0], getAvgs xs.[1..])
+    let calcAverage (xs: array<string>) =
+      (toInt (3, xs)) - (toInt (0, xs))
+
+    let getDailyAvg (xs: array<string>) =
+      (xs.[0], calcAverage xs.[1..])
 
 
     [<Koan>]
     let YouGotTheAnswerCorrect() =
       let result =
         List.tail stockData
-        |> List.map (splitCommas >> toTuples)
-        |> List.maxBy snd
-        |> (fun (date,_) -> date)
+        |> List.map (splitCommas >> getDailyAvg)
+        |> List.maxBy snd // [(string, int)] -> (string, int) where int is max
+        |> (fun (date,_) -> date) // (string, int) -> string
 
 
 
